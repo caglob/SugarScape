@@ -1,3 +1,6 @@
+import java.util.Random;
+
+
 abstract class Sorter{
   
   
@@ -141,36 +144,37 @@ class QuickSorter extends Sorter{
         ArrayList<Agent> l1 = new ArrayList<Agent>();
         ArrayList<Agent> l2 = new ArrayList<Agent>();
         int size = al.size();
-        boolean same = true;
         
         if(size != 0){
         Agent pivot = al.get(size-1);
         
-        
+       
         
         
         for(int i = 0; i < size; i++){
             if(lessThan(al.get(i), pivot))
                 l1.add(0, al.get(i));
-            else if(lessThan(al.get(i), pivot) == false)
+             else{
+                if(al.get(i) == pivot){
+                if(new Random().nextBoolean() == true)
+                    l1.add(0, al.get(i));
+                else
+                    l2.add(0, al.get(i));
+                }
+                else
                 l2.add(0, al.get(i));
-            else{
-                if(same == true){
-                    l1.add(0, al.get(i)); same = !same;}
-                else{
-                    l2.add(0, al.get(i)); same = !same;}
+                }
                   }
         }
         al.clear();
         
         if(l1.size() > 1)
-        sort(l1);
+           sort(l1); 
         if(l2.size() > 1)
-        sort(l2);
+          sort(l2);
         
         al.addAll(l1); al.addAll(l2);
     }
         
      }
   
-    }

@@ -58,6 +58,9 @@ abstract class LineGraph extends Graph{
   String ylab;
   int update;
   float yloc;
+  int t = 1;
+  int mag = 1;
+ 
   
   
   public LineGraph(int x, int y, int howWide, int howTall, String xlab, String ylab){
@@ -79,19 +82,28 @@ abstract class LineGraph extends Graph{
   public void update(SugarGrid g){
     
     
+    
     if(update == 0)
       super.update(g);
     else{
-      yloc = (howTall - nextPoint(g) + y);
+      if(nextPoint(g) > howTall*mag)
+      {
+      mag ++ ;
+      } 
+      //println(yloc);
+      yloc = (howTall - nextPoint(g)/t + y);
       if(yloc < y+2)
         yloc = y+2;
       if(yloc > y+howTall-5)
         yloc = y + howTall - 5;
        stroke(0); rect(x+update+15, yloc, 1, 1);}
+       
     
     
-    if(update == howWide-5)
+    if(update == howWide-5){
       update = 0;
+      t = mag;  
+      }
     else
       update++;
     
@@ -176,18 +188,26 @@ class AgentPopulationLineGraph extends LineGraph{
 
 abstract class CDFGraph extends Graph{
   
+  int numPerCell;
   int callsPerValue;
   int howWide;
+  int howTall;
   int numUpdates;
+  int x;
+  int y;
   
   
  public CDFGraph(int x, int y, int howWide, int howTall, 
                 String xlab, String ylab, int callsPerValue){
-                  
-         super(x, y, howWide, howTall, xlab, ylab);         
-             this.callsPerValue = callsPerValue;
-             this.howWide = howWide;
-             this.numUpdates = 0;
+                          
+         super(x, y, howWide, howTall, xlab, ylab);  
+         this.howWide = howWide; 
+         this.howTall = howTall;
+         this.callsPerValue = callsPerValue;
+         this.x = x;
+         this.y = y;
+         //print(howWide);
+             
                 }
                 
                 
@@ -195,20 +215,18 @@ abstract class CDFGraph extends Graph{
      
      public abstract int nextPoint(SugarGrid g); 
      
-     public abstract float getTotalCalls(SugarGrid g); 
+     public abstract int getTotalCalls(SugarGrid g); 
      
      public void update(SugarGrid g){
-       this.numUpdates = 0;
+       numUpdates = 0;
        super.update(g);
        reset(g);
-       float numPerCell = howWide/getTotalCalls(g);
-       println(numUpdates+" "+ nextPoint(g)+" "+ numPerCell+" "+ 1);
+       this.numPerCell = howWide/getTotalCalls(g);
        while(numUpdates < getTotalCalls(g)){
-         
-         rect(numUpdates, nextPoint(g), numPerCell, 1);
-         this.numUpdates++;
+         rect(x + numUpdates, y + nextPoint(g), 
+              numPerCell, 1);      //numUpdates, nextPoint(g));
+         numUpdates ++;
        }
-       
        
      }
                 
@@ -223,7 +241,7 @@ abstract class CDFGraph extends Graph{
 
 class WealthCDFGraph extends CDFGraph{
   
-  ArrayList<Agent> list = new ArrayList<Agent>();
+  ArrayList<Agent> list;
   int totalSugar;
   int sugarSoFar;
   
@@ -233,34 +251,22 @@ class WealthCDFGraph extends CDFGraph{
                          }
                          
               public void reset(SugarGrid g){
-                this.sugarSoFar = 0;
-                this.totalSugar = 0;
-                ArrayList<Agent> rlist = g.getAgents();
-                new MergeSorter().sort(rlist);
-                this.list.clear(); this.list.addAll(rlist);
-                for(Agent agent: rlist){
-                  this.totalSugar += agent.getSugarLevel();
-                }
+               
+               
+                
               }
   
   
   
                   public int nextPoint(SugarGrid g){
-                    int totalNextSugar = 0;
-                    int numNextAgent = 0;
-                    for(int i = 0; i < callsPerValue; i++){
-                      if(i < list.size()){
-                      totalNextSugar += list.get(i).getSugarLevel(); numNextAgent++;}
-                    }
-                    this.sugarSoFar += totalNextSugar/numNextAgent;
-                    return (sugarSoFar/totalSugar)/100;
+                    return 1;
                   }
                   
                   
                   
   
-             public float getTotalCalls(SugarGrid g){
-               return g.getAgents().size()/callsPerValue;
+             public int getTotalCalls(SugarGrid g){
+               return 1;
              }
              
   

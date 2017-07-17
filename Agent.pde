@@ -1,4 +1,4 @@
-import java.lang.Throwable;
+//import java.lang.Throwable;
 
 
 class Agent {
@@ -33,9 +33,10 @@ class Agent {
     return m;
   }
   
+  
   public void move(Square source, Square dest) {
     if(dest.getAgent() != null && source != dest){
-      assert(1==0);
+      throw new Error(" Two agents occupy the same square");//assert(1==0);
     }
     if(source == dest){}
     else{
@@ -76,6 +77,9 @@ class Agent {
   }
   
 }
+
+
+
   
   
   

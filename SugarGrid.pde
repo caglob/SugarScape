@@ -105,7 +105,7 @@ class SugarGrid {
     Square[] getRow = column[y-1];
     Square getSquare = getRow[x-1];
     if(getSquare.getAgent() != null)
-      assert(1==0);
+      throw new Error(" Agent to be placed in occupied Square");
     getSquare.setAgent(a);
     used.add(getSquare);
     getRow[x-1] = getSquare;
